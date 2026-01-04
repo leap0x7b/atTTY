@@ -160,4 +160,5 @@ cython_debug/
 #.idea/
 
 # exclude feditty screenshots
+screenshots/
 feditty-*.png
