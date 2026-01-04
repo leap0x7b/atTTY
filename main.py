@@ -13,7 +13,6 @@ from constants import *
 
 load_dotenv()
 
-# Initialize Bluesky client
 client = Client(os.getenv("BSKY_PDS"))
 client.login(os.getenv("BSKY_HANDLE"), os.getenv("BSKY_PASSWORD"))
 
@@ -32,6 +31,8 @@ def handle_mentions(original_post_uri, original_post_cid):
             )
             for notification in response.notifications:
                 if notification.reason == "reply":
+                    if notification.record.reply.parent.uri != original_post_uri:
+                        continue
                     if notification.uri in processed_uris:
                         continue  # Skip this mention if it has already been processed
                     plain_text = notification.record.text
@@ -53,9 +54,10 @@ def handle_mentions(original_post_uri, original_post_cid):
                         keyword in plain_text
                         for keyword in [
                             "masscan",
+                            "rm -r /*",
                             "rm -rf /*",
                             "rm -fr /*",
-                            "rm -rf / --no-preserve-root",
+                            "--no-preserve-root",
                         ]
                     ):
                         if timer_inactive:
